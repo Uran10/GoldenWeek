@@ -1,0 +1,390 @@
+<!doctype html>
+<html lang="it">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Golden Week | Ponti e ferie</title>
+    <style>
+      :root {
+        font-family:
+          system-ui,
+          -apple-system,
+          Segoe UI,
+          sans-serif;
+        color: #18332c;
+        background: #f5f8f4;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+      }
+      header {
+        background: #153d32;
+        color: white;
+        padding: 42px max(20px, calc((100vw - 1050px) / 2));
+      }
+      h1 {
+        font-size: clamp(32px, 5vw, 54px);
+        margin: 6px 0;
+      }
+      header p {
+        color: #d6e7dd;
+        max-width: 650px;
+      }
+      main {
+        max-width: 1050px;
+        margin: 25px auto;
+        padding: 0 18px;
+      }
+      .controls {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 14px;
+        background: white;
+        padding: 20px;
+        border-radius: 18px;
+        box-shadow: 0 5px 20px #1232;
+      }
+      label {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        font-weight: 650;
+      }
+      select,
+      input {
+        padding: 11px;
+        border: 1px solid #ccd8d0;
+        border-radius: 9px;
+        font: inherit;
+        min-width: 130px;
+      }
+      .intro {
+        margin: 26px 0 14px;
+      }
+      .results {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 16px;
+      }
+      .card {
+        background: white;
+        border: 1px solid #dfe9e1;
+        border-radius: 16px;
+        padding: 20px;
+      }
+      .top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+      }
+      .pill {
+        background: #d9f3de;
+        color: #175d38;
+        padding: 6px 10px;
+        border-radius: 100px;
+        font-size: 12px;
+        font-weight: 750;
+      }
+      .numbers {
+        display: flex;
+        gap: 20px;
+        margin: 18px 0;
+      }
+      .numbers strong {
+        font-size: 30px;
+        display: block;
+      }
+      .numbers small {
+        color: #60766b;
+      }
+      .days {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px;
+        margin: 12px 0;
+      }
+      .day {
+        min-width: 32px;
+        padding: 8px 5px;
+        text-align: center;
+        border-radius: 7px;
+        background: #e7eee9;
+        font-size: 12px;
+      }
+      .holiday {
+        background: #bfe9ca;
+      }
+      .leave {
+        background: #ffe4a1;
+      }
+      .weekend {
+        background: #dce7fb;
+      }
+      .muted {
+        color: #5d7065;
+        font-size: 13px;
+      }
+      button {
+        border: 0;
+        background: #205d45;
+        color: white;
+        border-radius: 9px;
+        padding: 10px 14px;
+        cursor: pointer;
+        font-weight: 650;
+      }
+      .legend {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 16px;
+        font-size: 13px;
+        margin: 14px 0 26px;
+      }
+      .dot {
+        display: inline-block;
+        width: 12px;
+        height: 12px;
+        border-radius: 3px;
+        margin-right: 5px;
+      }
+      footer {
+        margin: 35px 0;
+        color: #65786e;
+        font-size: 13px;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div>✦ GOLDEN WEEK</div>
+      <h1>Più vacanza.<br />Meno ferie.</h1>
+      <p>
+        Scopri i ponti migliori in Italia: combina festività, weekend e pochi
+        giorni di ferie per ottenere più giorni liberi consecutivi.
+      </p>
+    </header>
+    <main>
+      <section class="controls">
+        <label>Anno<select id="year"></select></label
+        ><label
+          >Massimo giorni di ferie<select id="max">
+            <option>1</option>
+            <option selected>2</option>
+            <option>3</option>
+            <option>4</option>
+            <option>5</option>
+            <option>7</option>
+            <option>10</option>
+          </select></label
+        ><label
+          >Durata minima<select id="min">
+            <option>3</option>
+            <option selected>4</option>
+            <option>5</option>
+            <option>7</option>
+            <option>9</option>
+          </select></label
+        ><label
+          >Ordina per<select id="sort">
+            <option value="eff">Miglior rendimento</option>
+            <option value="length">Più giorni liberi</option>
+            <option value="date">Data</option>
+          </select></label
+        >
+      </section>
+      <h2 class="intro">I ponti migliori <span id="count"></span></h2>
+      <div class="legend">
+        <span><i class="dot" style="background: #bfe9ca"></i>Festività</span
+        ><span
+          ><i class="dot" style="background: #ffe4a1"></i>Ferie da
+          prendere</span
+        ><span><i class="dot" style="background: #dce7fb"></i>Weekend</span>
+      </div>
+      <section id="results" class="results"></section>
+      <footer>
+        Ipotesi: lavori dal lunedì al venerdì; le festività sono quelle
+        nazionali italiane. Non sono inclusi santi patroni, chiusure aziendali o
+        festività locali. I giorni di ferie indicati sono da concordare con il
+        datore di lavoro.
+          <p>
+                Golden Week – Creato da
+                <a href="https://uran10.github.io/"
+                target="_blank"
+                rel="noopener noreferrer">
+                Uran10.github.io
+                </a>
+            </p>
+      </footer>
+    </main>
+    <script>
+      const names = [
+        "Capodanno",
+        "Epifania",
+        "Festa della Liberazione",
+        "Festa dei Lavoratori",
+        "Festa della Repubblica",
+        "Ferragosto",
+        "San Francesco d’Assisi",
+        "Ognissanti",
+        "Immacolata Concezione",
+        "Natale",
+        "Santo Stefano",
+      ];
+      const fixed = [
+        "01-01",
+        "01-06",
+        "04-25",
+        "05-01",
+        "06-02",
+        "08-15",
+        "10-04",
+        "11-01",
+        "12-08",
+        "12-25",
+        "12-26",
+      ];
+      const dayfmt = new Intl.DateTimeFormat("it-IT", {
+        day: "numeric",
+        month: "short",
+        timeZone: "UTC",
+      });
+      const longfmt = new Intl.DateTimeFormat("it-IT", {
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+        timeZone: "UTC",
+      });
+      const iso = (d) => d.toISOString().slice(0, 10);
+      const add = (d, n) => new Date(d.getTime() + n * 86400000);
+      function easter(y) {
+        let a = y % 19,
+          b = Math.floor(y / 100),
+          c = y % 100,
+          d = Math.floor(b / 4),
+          e = b % 4,
+          f = Math.floor((b + 8) / 25),
+          g = Math.floor((b - f + 1) / 3),
+          h = (19 * a + b - d - g + 15) % 30,
+          i = Math.floor(c / 4),
+          k = c % 4,
+          l = (32 + 2 * e + 2 * i - h - k + 7) % 7,
+          m = Math.floor((a + 11 * h + 22 * l) / 451),
+          p = h + l - 7 * m + 114;
+        return new Date(Date.UTC(y, Math.floor(p / 31) - 1, (p % 31) + 1));
+      }
+      function holidays(y) {
+        let map = new Map();
+        fixed.forEach((v, i) => map.set(y + "-" + v, names[i]));
+        let e = easter(y);
+        map.set(iso(e), "Pasqua");
+        map.set(iso(add(e, 1)), "Pasquetta");
+        return map;
+      }
+      function calc() {
+        let y = +document.querySelector("#year").value,
+          max = +document.querySelector("#max").value,
+          min = +document.querySelector("#min").value,
+          sort = document.querySelector("#sort").value;
+        let h = new Map([
+          ...holidays(y - 1),
+          ...holidays(y),
+          ...holidays(y + 1),
+        ]);
+        let start = new Date(Date.UTC(y, 0, 1)),
+          end = new Date(Date.UTC(y, 11, 31));
+        let base = add(start, -11),
+          n = Math.round((add(end, 12) - base) / 86400000) + 1;
+        let dates = Array.from({ length: n }, (_, i) => add(base, i));
+        let type = dates.map((d) =>
+          h.has(iso(d))
+            ? "holiday"
+            : d.getUTCDay() === 0 || d.getUTCDay() === 6
+              ? "weekend"
+              : "work",
+        );
+        let pref = [0];
+        type.forEach((t) => pref.push(pref.at(-1) + (t === "work" ? 1 : 0)));
+        let opts = [];
+        for (let i = 0; i < n; i++) {
+          if (type[i] === "work") continue;
+          for (let j = i + min - 1; j < Math.min(n, i + 35); j++) {
+            if (type[j] === "work") continue;
+            let leave = pref[j + 1] - pref[i];
+            if (leave > max) break;
+            if (leave === 0 || j - i + 1 < min) continue;
+            if (dates[j] < start || dates[i] > end) continue;
+            let hol = dates.slice(i, j + 1).filter((d) => h.has(iso(d)));
+            if (!hol.length) continue;
+            let length = j - i + 1;
+            opts.push({ i, j, leave, length, ratio: length / leave, hol });
+          }
+        }
+        opts.sort((a, b) =>
+          sort === "date"
+            ? a.i - b.i
+            : sort === "length"
+              ? b.length - a.length || a.leave - b.leave
+              : b.ratio - a.ratio || b.length - a.length || a.i - b.i,
+        );
+        let chosen = [];
+        for (let p of opts) {
+          if (
+            chosen.some(
+              (q) => (p.i >= q.i && p.j <= q.j) || (p.i === q.i && p.j === q.j),
+            )
+          )
+            continue;
+          chosen.push(p);
+          if (chosen.length >= 30) break;
+        }
+        document.querySelector("#count").textContent =
+          "(" + chosen.length + " opportunità)";
+        document.querySelector("#results").innerHTML = chosen.length
+          ? chosen
+              .map((p) => {
+                let ds = dates.slice(p.i, p.j + 1),
+                  leaves = ds.filter(
+                    (d) => type[Math.round((d - base) / 86400000)] === "work",
+                  );
+                let hols = [...new Set(p.hol.map((d) => h.get(iso(d))))];
+                return `<article class="card"><div class="top"><b>${hols.slice(0, 2).join(" + ")}</b><span class="pill">${p.length} giorni liberi</span></div><p>${longfmt.format(ds[0])} – ${longfmt.format(ds.at(-1))}</p><div class="numbers"><div><strong>${p.leave}</strong><small>giorni di ferie</small></div><div><strong>${p.length}</strong><small>giorni di vacanza</small></div></div><div class="days">${ds
+                  .map((d) => {
+                    let t = type[Math.round((d - base) / 86400000)];
+                    return `<span title="${longfmt.format(d)}${h.has(iso(d)) ? " · " + h.get(iso(d)) : ""}" class="day ${t === "work" ? "leave" : t}">${dayfmt.format(d)}</span>`;
+                  })
+                  .join(
+                    "",
+                  )}</div><p class="muted">Prendi ferie: ${leaves.map((d) => dayfmt.format(d)).join(", ")}</p><button data-days="${leaves.map(iso).join(",")}">Copia giorni di ferie</button></article>`;
+              })
+              .join("")
+          : "<p>Nessuna combinazione trovata. Prova ad aumentare i giorni di ferie disponibili.</p>";
+        document.querySelectorAll("button[data-days]").forEach(
+          (b) =>
+            (b.onclick = async () => {
+              let text = b.dataset.days
+                .split(",")
+                .map((s) => s.split("-").reverse().join("/"))
+                .join(", ");
+              try {
+                await navigator.clipboard.writeText(text);
+                b.textContent = "Copiato!";
+              } catch {
+                prompt("Copia queste date:", text);
+              }
+            }),
+        );
+      }
+      let yr = document.querySelector("#year");
+      for (let y = 2026; y <= 2035; y++) yr.add(new Option(y, y));
+      yr.value = "2027";
+      document
+        .querySelectorAll("select")
+        .forEach((el) => el.addEventListener("change", calc));
+      calc();
+    </script>
+  </body>
+</html>
